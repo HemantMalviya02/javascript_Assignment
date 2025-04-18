@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>task1_javascript</title>
+    <style>
+        #container{
+            background-color: black;
+            color: white;
+            margin-top: 20px;
+            padding: 25px;
+            width: 350px;
+            border-radius: 5px;
+        }
+        .highlight_text{
+            background-color: rgb(155, 194, 194);
+        }
+    </style>
+</head>
+<body>
+    <h3>Find Text</h3>
+    <input id="text" type="text" placeholder="enter word" /> <br> <br>
+    <button onclick="firstOccurence()">Find first occurence</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button onclick="allOccurences()">Find all occurence</button>
+
+    <div id="container">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Necessitatibus, aspernatur fugit quasi ratione, et dignissimos praesentium aliquid dolores maiores doloremque quaerat animi, rem sapiente impedit. Consequuntur aliquam obcaecati ipsam, atque voluptatum dolore quaerat corrupti, fugiat animi placeat sit voluptates natus dolor similique incidunt cumque. Quaerat quam blanditiis reiciendis facilis ducimus, quo, rerum temporibus doloremque eum repudiandae illo assumenda nisi perferendis hic sequi? Laborum, commodi. Aut iusto minus quo harum ab repellat ipsa magni dolorem. Similique, at atque veritatis pariatur maxime veniam sunt amet dolorum aut. Magnam facere aperiam itaque, sapiente quasi molestiae rerum veritatis, ullam sequi repellendus deleniti nihil neque.</div>
+
+    <script>
+        const paragraph = document.getElementById("container");
+        const originalText = paragraph.innerText;
+
+        function resetText() {
+            paragraph.innerText = originalText;
+        }
+
+        function firstOccurence() {
+            resetText();
+            const word = document.getElementById("text").value.trim();
+            if(!word) 
+                return;
+            const words = paragraph.innerText.split(" ");      //for converting in arr
+            const i = words.findIndex(w => w.toLowerCase().includes(word.toLowerCase()));    //for comparing the word
+            console.log("words of i"+words[i]);
+             
+            if(i !== -1) {
+                words[i] = `<span class="highlight_text">${words[i]}</span>`;
+                paragraph.innerHTML = words.join(" ");
+            }
+        }
+
+        function allOccurences() {
+            resetText();
+            const word = document.getElementById("text").value.trim();
+            if(!word) 
+                return;
+            const words = paragraph.innerText.split(" ");
+            const i = words.map(w => w.toLowerCase().includes(word.toLowerCase()) ? `<span class="highlight_text">${w}</span> `: w );
+            paragraph.innerHTML = i.join(" ");
+        }
+    </script>
+</body>
+</html>
