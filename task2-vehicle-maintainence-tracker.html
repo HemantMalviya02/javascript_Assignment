@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Maintainence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 600px;
+            text-align: center;
+            background: linear-gradient(to right, #000000, #434343);
+        }
+        .container{
+            padding-top: 40px;
+            background-color: white;
+            height: 300px;
+            border-radius: 7px;
+            /* box-shadow: 10px 10px 10px rgba(247, 177, 85, 0.927) ; */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(255, 251, 251, 0.636);
+            h2{
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                transform: translateY(-15px);
+            }
+        }
+        input{
+            width: 400px;
+            margin: 10px;
+            padding: 5px;
+        }
+        .services {
+            width: 415px;
+            margin: 10px;
+            padding: 5px;
+        }
+        #addBtn {
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            /* flex: 1; */
+            width: 200px;
+            margin-left: 45px;
+        }
+        i{
+            cursor: pointer;
+        }
+        #data {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin-top: 2rem;
+        }
+        .recordItem {
+            background-color: white;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(255, 251, 251, 0.636);
+            padding: 25px;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .complete-icon {
+            margin-left: 40px;
+        }
+        #edit-icon {
+            margin-left: 10px;
+        } 
+        #delete-icon{
+            margin-left: 10px;
+        }
+        .form-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        #filter {
+            padding: 8px 12px;
+            border: 1px solid rgb(239, 239, 239);
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font-size: 16px;
+            color: #333;
+            cursor: pointer;
+            margin-right: 42px;
+            /* flex: 1; */
+            /* max-width: 200px; */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Vehicle Maintenance Tracker</h2>
+        <input type="text" id="name" placeholder="vehicle name"><br>
+        <input type="text" id="model" placeholder="vehicle model"><br>
+        <select class="services" id="services">
+            <option value="service" disabled selected>Services</option>
+            <option value="Air filter change">Air filter change</option>
+            <option value="Fuel filter">Fuel filter</option>
+            <option value="Oil change">Oil change</option>
+            <option value="Battery check">Battery check</option>
+            <option value="Brake inspection">Brake inspection</option>
+            <option value="Wheel alignment">Wheel alignment</option>
+        </select><br>
+        <input type="date" id="date"><br>
+        <div class="form-action-row">
+            <button onclick="addElement()" type="submit" id="addBtn">Add</button>
+            <select name="filter" id="filter">
+              <option value="all">All</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+          
+        <div class="show-data" id="data"></div>
+    </div>
+
+    <script>
+        let name = document.getElementById("name");
+        let model = document.getElementById("model");
+        let service = document.getElementById("services");
+        let date = document.getElementById("date");
+        let data = document.getElementById("data");
+        let button = document.getElementById("addBtn");
+        let editId = null;
+
+        let getData = JSON.parse(localStorage.getItem("dataList")) || [];
+        let currentFilter = "all"
+        function makeTable() {
+            data.innerHTML = "";
+            let filterTask = getData.filter(f => {
+                if(currentFilter === "pending")
+                    return !f.completed;
+                if(currentFilter === "completed")
+                    return f.completed;
+                return true;
+            })
+            filterTask.forEach(
+                d => {
+                    let record = document.createElement("div");
+                    if (d.completed) {
+                        record.style.backgroundColor = "#d4edda"; // greenish
+                    }
+                    record.classList.add("recordItem")          //making a class - recordItem common to all
+                    const completed = d.completed ? "completed" : "";
+                    record.innerHTML = 
+                        `
+                            <strong>${d.name}&nbsp;${d.model}</strong> - ${d.service} - ${d.date} 
+                            <i id="${completed}" class="fa-solid fa-circle-check complete-icon"  title="mark as complete"></i>
+                            <i id="edit-icon" class="fa-solid fa-pen-to-square" title="edit"></i>
+                            <i id="delete-icon" class="fa-solid fa-trash" title="delete"></i>
+                        `;
+                            
+                        let completeButton = record.querySelector(".complete-icon");    
+                        let editButton = record.querySelector("#edit-icon");
+                        let deleteButton = record.querySelector("#delete-icon");
+
+                        completeButton.addEventListener("click", function(){
+                            record.style.backgroundColor="#d4edda";
+                            if(d.completed)
+                                return;
+                            d.completed = true;
+                            localStorage.setItem("dataList", JSON.stringify(getData));
+                            makeTable();
+                        });
+
+                        editButton.addEventListener("click", function(){
+                            name.value = d.name;
+                            model.value = d.model;
+                            service.value = d.service;
+                            date.value = d.date;
+                            button.innerText = "update";
+                            editId = d.id;
+                        });
+                        deleteButton.addEventListener("click", function() {
+                            getData = getData.filter(t => t.id !== d.id);    //returning all the remaining records
+                            localStorage.setItem("dataList", JSON.stringify(getData));
+
+                            makeTable();
+                        });
+                        data.appendChild(record);
+                }
+            )
+        }
+        document.getElementById("filter").addEventListener("change", function(){
+            currentFilter = this.value;
+            makeTable();
+        })
+        function addElement() {
+            let vehicleName = name.value.trim();    //text field value
+            let vehicleModel = model.value.trim();
+            let vehicleService = service.value;
+            let vehicleDate = date.value.trim();
+
+            if(editId !== null) {
+                getData = getData.map(task => {
+                    if(task.id == editId){
+                        task.name = vehicleName;
+                        task.model = vehicleModel;
+                        task.service = vehicleService;
+                        task.date = vehicleDate;
+                    }
+                    return task;
+                })
+                editId = null;
+                
+                button.innerText = "Add";
+            }
+            else{
+                let newTask = {
+                    id : Date.now(),
+                    name : vehicleName,
+                    model : vehicleModel,
+                    service : vehicleService,
+                    date : vehicleDate,
+                    completed : false
+                };
+                getData.push(newTask);
+            }
+            localStorage.setItem("dataList", JSON.stringify(getData));
+
+            name.value = "";
+            model.value = "";
+            service.value = "";
+            date.value = "";
+            makeTable();
+        }
+        makeTable();
+    </script>
+</body>
+</html>
